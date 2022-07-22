@@ -8,9 +8,9 @@ from realcamera import camerascaning
 from realrecord import record
 
 
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')  # 
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY') #
-AWS_S3_BUCKET = os.getenv('AWS_S3_BUCKET') # detectus
+AWS_ACCESS_KEY_ID = os.getenv('AKIAQ3PMZ5SFNRJKMQS5')  # 
+AWS_SECRET_ACCESS_KEY = os.getenv('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') #
+AWS_S3_BUCKET = os.getenv('detectus') # detectus
 
 if not (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY and AWS_S3_BUCKET):
     raise Exception('set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and AWS_S3_BUCKET environment vars')
