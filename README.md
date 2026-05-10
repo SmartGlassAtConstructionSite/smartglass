@@ -1,92 +1,113 @@
-# 22 Hi022 Iot
+<div align="center">
 
+# 🦺 Smart Glass — Construction Site (Device)
+### 건설 현장 안전관리 스마트글래스 — 디바이스 펌웨어
 
+<p>
+  <img src="https://img.shields.io/badge/Project-2022_한이음_ICT_멘토링-blue?style=flat-square" />
+  <img src="https://img.shields.io/badge/Award-전국_600팀_중_장려상-orange?style=flat-square" />
+  <img src="https://img.shields.io/badge/Award-정보처리학회_우수논문상-orange?style=flat-square" />
+  <img src="https://img.shields.io/badge/Role-Team_Lead-red?style=flat-square" />
+</p>
 
-## Getting started
+<p>
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/Raspberry_Pi-A22846?style=for-the-badge&logo=raspberry-pi&logoColor=white" />
+  <img src="https://img.shields.io/badge/AWS_S3-569A31?style=for-the-badge&logo=amazon-aws&logoColor=white" />
+  <img src="https://img.shields.io/badge/Google_Assistant-4285F4?style=for-the-badge&logo=google-assistant&logoColor=white" />
+  <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" />
+</p>
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+</div>
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+---
 
-## Add your files
+## 🏗 Why this project
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+건설 현장의 안전 점검은 여전히 종이 체크리스트와 수기 보고에 의존합니다. 작업자가 위험 상황을 발견해도 사진을 찍고 사무실에 보고하는 데 시간이 걸리고, 그 사이 사고가 일어납니다.
+
+본 프로젝트는 **현장 작업자가 손을 떼지 않고 사고를 즉시 보고하도록** 설계된 안전관리 스마트글래스의 디바이스 측 코드를 담고 있습니다.
+
+> 결과: 현장 점검 흐름 약 **40% 개선**, 한이음 전국 600팀 중 **장려상**, 한국정보처리학회 **우수논문상** 수상.
+
+---
+
+## 📷 Device Architecture
 
 ```
-cd existing_repo
-git remote add origin https://lab.hanium.or.kr/22_HI022/22_hi022_iot.git
-git branch -M main
-git push -uf origin main
+┌──────────────────────────────────────┐
+│   Smart Glass (Raspberry Pi)         │
+│                                      │
+│   ▣ PiCamera 2592×1944               │
+│   ▣ Microphone (PyAudio, 5s clip)    │
+│   ▣ Hardware Switch (GPIO 14)        │
+│   ▣ Curses-based local display       │
+│                                      │
+│   trigger ──► capture + record ──┐   │
+└──────────────────────────────────│───┘
+                                   ▼
+                       ┌────────────────────┐
+                       │  AWS S3 (boto3)    │
+                       │  upload .jpg/.wav  │
+                       └─────────┬──────────┘
+                                 ▼
+                       ┌────────────────────┐
+                       │  Django Backend +  │
+                       │  Android Viewer    │
+                       └────────────────────┘
 ```
 
-## Integrate with your tools
+작업자가 위험을 발견하고 글래스의 스위치를 누르면 → 즉시 고해상도 사진 + 5초 음성 클립이 캡처되고 → AWS S3로 업로드 → 관제 앱에서 실시간 확인.
 
-- [ ] [Set up project integrations](https://lab.hanium.or.kr/22_HI022/22_hi022_iot/-/settings/integrations)
+---
 
-## Collaborate with your team
+## 🧩 Components in this repo
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+| File | Role |
+|---|---|
+| `main.py` | 메인 루프 — 스위치 감지 / 캡처 / S3 업로드 |
+| `camerascan.py` | 이미지 캡처 및 해상도 제어 |
+| `recording.py` | PyAudio 기반 5초 현장 음성 녹음 |
+| `display.py` | curses 기반 로컬 상태 표시 |
+| `Hardware_Image.jpg` | 실제 디바이스 사진 |
 
-## Test and Deploy
+---
 
-Use the built-in continuous integration in GitLab.
+## 🛠 Tech Stack
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+- **Hardware**: Raspberry Pi / PiCamera / Microphone / Tactile Switch
+- **Software**: Python / picamera / pyaudio / RPi.GPIO / boto3 (AWS SDK)
+- **Cloud**: AWS S3 (이미지 / 음성 저장), Backend Django REST
+- **Companion**: Android viewer + Google Assistant 연동
 
-***
+---
 
-# Editing this README
+## 🔗 Related Repositories
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+| | |
+|---|---|
+| 🦺 **Device firmware** *(this repo)* | [smartglass](https://github.com/SmartGlassAtConstructionSite/smartglass) |
+| 🖥 Backend (Django REST) | [backend](https://github.com/SmartGlassAtConstructionSite/backend) |
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+---
 
-## Name
-Choose a self-explaining name for your project.
+## 🏆 Awards
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+- 🥉 **2022 한이음 ICT 멘토링 장려상** — 과학기술정보통신부 / KCC정보통신 (전국 600팀 중 선정)
+- 🏅 **2022 한국정보처리학회 ACK 우수논문상**
+- 🥈 **2022 서울과기대 캡스톤디자인 우수상**
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+---
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## 👥 Team
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+본 프로젝트는 6인 팀 학부 캡스톤 프로젝트입니다.
+**Team Lead / First Author: 최혜린 (Hye-rin Choi)**
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+---
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+<div align="center">
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+*Bringing on-site safety reporting from minutes to seconds.*
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+</div>
